@@ -1,0 +1,225 @@
+.App {
+  text-align: center;
+}
+.post-area,
+.postPage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.post,
+.leftSide,
+.warning {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  box-shadow: rgba(99, 99, 99, 0.3) 0px 0px 8px 0px;
+  padding: 10px;
+  margin: 10px;
+  width: 250px;
+  transition: all 0.15s;
+}
+.leftSide {
+  transition: all 0s;
+}
+.post {
+  cursor: pointer;
+}
+.post:hover {
+  box-shadow: rgba(88, 88, 88, 0.4) 0px 0px 10px 0px;
+}
+.title {
+  display: grid;
+  place-content: center;
+  margin: 20px;
+}
+.body,
+.postText {
+  display: grid;
+  place-content: center;
+  margin: 20px;
+  text-align: left;
+}
+.icon {
+  grid-area: like;
+}
+.icon img {
+  cursor: pointer;
+  transform: translateY(0.5px);
+  width: 12px;
+  transition: all 0.2s;
+}
+.likebtn {
+  opacity: 0.2;
+}
+.unlikebtn {
+  opacity: 1;
+}
+.line {
+  height: 1px;
+  transform: scaleX(0.8) scaleY(0.3);
+  background-color: black;
+  grid-area: line;
+}
+button,
+.Link {
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin: 5px 10px;
+  border: 0px solid white;
+  background-color: white;
+  font-size: smaller;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 5px 0px;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+button:hover,
+.Link:hover {
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px 0px;
+}
+button:active,
+.Link:active {
+  background-color: rgb(240, 240, 240);
+}
+.addCommentContainer {
+  margin: 60px 30px 0px 30px;
+}
+.comment {
+  margin: 38px;
+  text-align: left;
+}
+.leftSide {
+  position: relative;
+}
+.leftSide .deletePost {
+  position: absolute;
+  bottom: -46px;
+  right: calc(50% - 139px);
+}
+input {
+  margin: 12px;
+}
+.Login,
+.Register {
+  margin: 20px;
+}
+.warning {
+  position: absolute;
+  text-align: center;
+  justify-self: center;
+  font-size: small;
+  z-index: 10;
+  top: 36%;
+  left: calc(50% - 155px);
+  padding: 20px;
+  background-color: white;
+  box-shadow: rgba(99, 99, 99, 0.3) 0px 0px 8px 0px,
+    0 0 0 100vmax rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template:
+    "text text"
+    "button1 button2";
+  opacity: 0;
+  transition: all 0.5s;
+}
+.username {
+  text-decoration: none;
+  grid-area: username;
+  transition: transform 0.25s;
+}
+.username:hover {
+  transform: translateY(1.2px);
+}
+.username:active {
+  color: initial;
+  transform: translateY(4px);
+}
+.icon img:hover {
+  transform: scale(1.35);
+}
+.footer {
+  display: grid;
+  margin: 20px 0;
+  row-gap: 26px;
+  grid-template:
+    ". username like"
+    "line line line"
+    / 1fr auto 1fr;
+}
+#logged-in-user {
+  color: rgb(88, 88, 88);
+}
+#homepage {
+  font-size: xx-large;
+  color: black;
+  margin: auto 10px;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+#homepage:hover {
+  transform: translateY(2px);
+}
+#homepage:active {
+  transform: translateY(4.4px);
+}
+#Nav {
+  position: relative;
+  margin: 30px auto 16px auto;
+}
+#Nav > * {
+  display: inline-flex;
+  margin-top: 12px;
+  margin-bottom: 24px;
+}
+#Nav .warning {
+  position: absolute;
+  top: 300%;
+}
+.titletext,
+.postTexttext {
+  position: relative;
+}
+.edit {
+  position: absolute;
+  top: calc(100% - 22px);
+  opacity: 0.25;
+  font-size: 1.25em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.edithint {
+  opacity: 0;
+  font-size: 0.66em;
+  white-space: nowrap;
+  margin-bottom: 50px;
+  transition: all 0.2s;
+  background-color: white;
+}
+.edit:hover {
+  transform: scale(1.02) translateX(2.2px);
+}
+.edit:hover,
+.edit:hover .edithint {
+  opacity: 0.5;
+}
+.edit:active,
+.edit:active .edithint {
+  opacity: 0.7;
+}
+.post-area {
+  opacity: 0;
+  animation: onload;
+  animation-duration: 0.2s;
+  animation-delay: 0.2s;
+  animation-fill-mode: forwards;
+}
+@keyframes onload {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
