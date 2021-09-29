@@ -21,12 +21,12 @@ function CreatePost() {
   });
   const onSubmit = (data) => {
     axios
-      .post("http://localhost:3001/posts", data, {
+      .post("https://shitdoug.herokuapp.com/posts", data, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
         axios
-          .get("http://localhost:3001/posts", {
+          .get("https://shitdoug.herokuapp.com/posts", {
             headers: { accessToken: localStorage.getItem("accessToken") },
           })
           .then((response) => {

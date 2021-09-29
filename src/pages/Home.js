@@ -19,7 +19,7 @@ function Home() {
     window.onbeforeunload = function () {
       window.scrollTo(0, 0);
     };
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("accessToken")) {
@@ -29,7 +29,7 @@ function Home() {
       let cancel;
       axios
         .get(
-          `http://localhost:3001/posts/offset/${postOffset}`,
+          `https://shitdoug.herokuapp.com/posts/offset/${postOffset}`,
           {
             headers: { accessToken: localStorage.getItem("accessToken") },
           },
@@ -55,7 +55,7 @@ function Home() {
                 .includes(postKey)
             )
               if (returnkey.current) {
-                console.log("sex")
+                console.log("sex");
                 returnkey.current.scrollIntoView({
                   block: "center",
                   inline: "center",
@@ -71,7 +71,7 @@ function Home() {
         });
       return () => cancel();
     }
-  }, [postOffset,history,postKey]);
+  }, [postOffset, history, postKey]);
 
   const observer = useRef();
   const loadPointRef = useCallback(
@@ -91,7 +91,7 @@ function Home() {
   const likePost = (postId) => {
     axios
       .post(
-        "http://localhost:3001/likes",
+        "https://shitdoug.herokuapp.com/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )

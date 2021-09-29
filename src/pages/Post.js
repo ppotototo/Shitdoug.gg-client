@@ -18,14 +18,18 @@ function Post() {
   const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/posts/byid/${id}`).then((response) => {
-      setPostObject(response.data);
-    });
-    axios.get(`http://localhost:3001/comments/${id}`).then((response) => {
-      setComments(response.data);
-    });
     axios
-      .get(`http://localhost:3001/likes/bypostid/${id}`, {
+      .get(`https://shitdoug.herokuapp.com/posts/byid/${id}`)
+      .then((response) => {
+        setPostObject(response.data);
+      });
+    axios
+      .get(`https://shitdoug.herokuapp.com/comments/${id}`)
+      .then((response) => {
+        setComments(response.data);
+      });
+    axios
+      .get(`https://shitdoug.herokuapp.com/likes/bypostid/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then((response) => {
@@ -44,7 +48,7 @@ function Post() {
   const likePost = (id) => {
     axios
       .post(
-        "http://localhost:3001/likes",
+        "https://shitdoug.herokuapp.com/likes",
         { PostId: id },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )
@@ -64,7 +68,7 @@ function Post() {
   const addComment = () => {
     axios
       .post(
-        "http://localhost:3001/comments",
+        "https://shitdoug.herokuapp.com/comments",
         {
           commentText: newComment,
           PostId: id,
@@ -92,7 +96,7 @@ function Post() {
 
   const deleteComment = (id) => {
     axios
-      .delete(`http://localhost:3001/comments/${id}`, {
+      .delete(`https://shitdoug.herokuapp.com/comments/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -106,7 +110,7 @@ function Post() {
 
   const deletePost = (id) => {
     axios
-      .delete(`http://localhost:3001/posts/${id}`, {
+      .delete(`https://shitdoug.herokuapp.com/posts/${id}`, {
         headers: { accessToken: localStorage.getItem("accessToken") },
       })
       .then(() => {
@@ -117,10 +121,11 @@ function Post() {
   const editPost = (field) => {
     if (field === "title") {
       let newTitle = prompt("New Title:", postObject.title);
-      if (newTitle === null) { return }
-      else {
+      if (newTitle === null) {
+        return;
+      } else {
         axios.put(
-          "http://localhost:3001/posts/title",
+          "https://shitdoug.herokuapp.com/posts/title",
           {
             newTitle: newTitle,
             id: id,
@@ -133,10 +138,11 @@ function Post() {
       setPostObject({ ...postObject, title: newTitle });
     } else if (field === "postText") {
       let newPostText = prompt("New Text:", postObject.postText);
-      if (newPostText === null) { return }
-      else {
+      if (newPostText === null) {
+        return;
+      } else {
         axios.put(
-          "http://localhost:3001/posts/postText",
+          "https://shitdoug.herokuapp.com/posts/postText",
           {
             newPostText: newPostText,
             id: id,

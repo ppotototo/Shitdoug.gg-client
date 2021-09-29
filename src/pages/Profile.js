@@ -14,26 +14,30 @@ function Profile() {
   const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/auth/userinfo/${id}`).then((response) => {
-      setUsername(response.data.username);
-    });
-    axios.get(`http://localhost:3001/posts/byuserid/${id}`).then((response) => {
-      setListOfPosts(response.data);
-      console.log(authState.id);
-      setLikedPosts(
-        response.data
-          .map((post) => post.Likes)
-          .flat()
-          .filter((like) => authState.id === like.UserId)
-          .map((like) => like.PostId)
-      );
-    });
+    axios
+      .get(`https://shitdoug.herokuapp.com/auth/userinfo/${id}`)
+      .then((response) => {
+        setUsername(response.data.username);
+      });
+    axios
+      .get(`https://shitdoug.herokuapp.com/posts/byuserid/${id}`)
+      .then((response) => {
+        setListOfPosts(response.data);
+        console.log(authState.id);
+        setLikedPosts(
+          response.data
+            .map((post) => post.Likes)
+            .flat()
+            .filter((like) => authState.id === like.UserId)
+            .map((like) => like.PostId)
+        );
+      });
   }, [id, authState]);
 
   const likePost = (postId) => {
     axios
       .post(
-        "http://localhost:3001/likes",
+        "https://shitdoug.herokuapp.com/likes",
         { PostId: postId },
         { headers: { accessToken: localStorage.getItem("accessToken") } }
       )

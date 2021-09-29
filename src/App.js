@@ -1,10 +1,5 @@
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Link,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Post from "./pages/Post";
@@ -27,7 +22,7 @@ function App() {
 
   useLayoutEffect(() => {
     axios
-      .get("http://localhost:3001/auth/auth", {
+      .get("https://shitdoug.herokuapp.com/auth/auth", {
         headers: {
           accessToken: localStorage.getItem("accessToken"),
         },
@@ -83,7 +78,8 @@ function App() {
                   id="homepage"
                   onClick={() => {
                     sessionStorage.removeItem("postKey");
-                    window.location.pathname === '/' && window.location.reload(true);
+                    window.location.pathname === "/" &&
+                      window.location.reload(true);
                   }}
                 >
                   Shitdoug.gg

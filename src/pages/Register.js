@@ -18,10 +18,10 @@ function Register() {
 
   let history = useHistory();
   const onSubmit = (data) => {
-    axios.post("http://localhost:3001/auth", data).then((r) => {
+    axios.post("https://shitdoug.herokuapp.com/auth", data).then((r) => {
       const rdata = r.data;
       axios
-        .post("http://localhost:3001/auth/login", rdata)
+        .post("https://shitdoug.herokuapp.com/auth/login", rdata)
         .then((response) => {
           if (response.data.error) {
             alert(response.data.error);
