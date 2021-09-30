@@ -53,26 +53,30 @@ function Home() {
   }, [postOffset, history, postKeyHome]);
 
   useEffect(() => {
-    setLikedPosts((postid) => {
-      return [
-        ...postid,
-        listOfPosts
-          .map((post) => post.Likes)
-          .flat()
-          .filter((like) => authState.id === like.UserId)
-          .map((like) => like.PostId),
-      ].flat();
-    });
-    if (postKeyHome) {
-      if (!listOfPosts.map((post) => post.id).includes(postKeyHome))
-        if (returnkey.current) {
-          returnkey.current.scrollIntoView({
-            block: "center",
-            inline: "center",
-          });
-          sessionStorage.removeItem("postKeyHome");
-        }
-      setpostOffset((prevPostOffset) => prevPostOffset + 1);
+    if (!localStorage.getItem("accessToken")) {
+      history.push("/login");
+    } else {
+      setLikedPosts((postid) => {
+        return [
+          ...postid,
+          listOfPosts
+            .map((post) => post.Likes)
+            .flat()
+            .filter((like) => authState.id === like.UserId)
+            .map((like) => like.PostId),
+        ].flat();
+      });
+      if (postKeyHome) {
+        if (!listOfPosts.map((post) => post.id).includes(postKeyHome))
+          if (returnkey.current) {
+            returnkey.current.scrollIntoView({
+              block: "center",
+              inline: "center",
+            });
+            sessionStorage.removeItem("postKeyHome");
+          }
+        setpostOffset((prevPostOffset) => prevPostOffset + 1);
+      }
     }
   }, [listOfPosts])
 
