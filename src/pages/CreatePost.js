@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -10,6 +10,8 @@ function CreatePost() {
     title: "",
     postText: "",
   };
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (!localStorage.getItem("accessToken")) {
       history.push("/login");
@@ -19,7 +21,9 @@ function CreatePost() {
     title: Yup.string().required("(post title is required)"),
     // postText: Yup.string().required(),
   });
+
   const onSubmit = (data) => {
+    setLoading(true);
     axios
       .post("https://shitdoug.herokuapp.com/posts", data, {
         headers: { accessToken: localStorage.getItem("accessToken") },
@@ -35,6 +39,7 @@ function CreatePost() {
           });
       });
   };
+
   return (
     <div className="createPostPage">
       <Formik
@@ -54,6 +59,7 @@ function CreatePost() {
           <button type="submit"> Create Post</button>
         </Form>
       </Formik>
+      {loading && <div className="submitting">submitting.</div>}
     </div>
   );
 }

@@ -223,3 +223,25 @@ input {
     opacity: 1;
   }
 }
+.submitting {
+  font-size: small;
+  color: grey;
+  margin: 10px;
+}
+.submitting::after {
+  content: '';
+  animation: loading;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+@keyframes loading {
+  0% {
+    content: '';
+  }
+  30% {
+    content: '.';
+  }
+  60% {
+    content: '..';
+  }
+}

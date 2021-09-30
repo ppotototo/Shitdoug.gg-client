@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -15,9 +15,11 @@ function Register() {
     password: Yup.string().min(6).max(20).required(),
   });
   const { setAuthState } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   let history = useHistory();
   const onSubmit = (data) => {
+    setLoading(true);
     axios.post("https://shitdoug.herokuapp.com/auth", data).then((r) => {
       const rdata = r.data;
       axios
@@ -56,6 +58,7 @@ function Register() {
           <button type="submit"> Register</button>
         </Form>
       </Formik>
+      {loading && <div className="submitting">submitting.</div>}
     </div>
   );
 }

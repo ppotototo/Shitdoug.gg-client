@@ -1,68 +1,128 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useParams, useHistory, Link } from "react-router-dom";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import axios from "axios";
-import { AuthContext } from "../helpers/AuthContext";
+import { useHistory, useParams } from "react-router-dom";
 import likeImg from "../images/768px-OOjs_UI_icon_heart.png";
+import { AuthContext } from "../helpers/AuthContext";
 
 function Profile() {
   let { id } = useParams();
   id = atob(id);
-  let history = useHistory();
   const [username, setUsername] = useState("");
   const [listOfPosts, setListOfPosts] = useState([]);
   const [likedPosts, setLikedPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
+  const [postOffset, setpostOffset] = useState(0);
   const { authState } = useContext(AuthContext);
+  let history = useHistory();
+  let postKeyProfile = parseInt(sessionStorage.getItem("postKeyProfile"), 10);
+
+  const returnkey = useRef();
 
   useEffect(() => {
+    window.onbeforeunload = function () {
+      window.scrollTo(0, 0);
+    };
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    let cancel;
     axios
       .get(`https://shitdoug.herokuapp.com/auth/userinfo/${id}`)
       .then((response) => {
         setUsername(response.data.username);
       });
     axios
-      .get(`https://shitdoug.herokuapp.com/posts/byuserid/${id}`)
-      .then((response) => {
-        setListOfPosts(response.data);
-        console.log(authState.id);
-        setLikedPosts(
-          response.data
-            .map((post) => post.Likes)
-            .flat()
-            .filter((like) => authState.id === like.UserId)
-            .map((like) => like.PostId)
-        );
-      });
-  }, [id, authState]);
-
-  const likePost = (postId) => {
-    axios
-      .post(
-        "https://shitdoug.herokuapp.com/likes",
-        { PostId: postId },
-        { headers: { accessToken: localStorage.getItem("accessToken") } }
+      .get(
+        `https://shitdoug.herokuapp.com/posts/offset/${postOffset}/byuserid/${id}`,
+        {
+          cancelToken: new axios.CancelToken((c) => (cancel = c)),
+        }
       )
       .then((response) => {
-        setListOfPosts(
-          listOfPosts.map((post) => {
-            if (post.id === postId) {
-              if (response.data.liked) {
-                return { ...post, Likes: [...post.Likes, 0] };
-              } else {
-                const likearray = post.Likes;
-                likearray.pop();
-                return { ...post, Likes: likearray };
-              }
-            } else return post;
-          })
-        );
-        if (likedPosts.includes(postId)) {
-          setLikedPosts(
-            likedPosts.filter((id) => {
-              return id !== postId;
-            })
-          );
-        } else setLikedPosts([...likedPosts, postId]);
+        setListOfPosts((post) => {
+          return [...post, response.data].flat();
+        });
+        setLikedPosts((postid) => {
+          return [
+            ...postid,
+            response.data
+              .map((post) => post.Likes)
+              .flat()
+              .filter((like) => authState.id === like.UserId)
+              .map((like) => like.PostId),
+          ].flat();
+        });
+        setHasMore(response.data.length > 0);
+        if (postKeyProfile) {
+          if (!response.data.map((post) => post.id).includes(postKeyProfile))
+            if (returnkey.current) {
+              returnkey.current.scrollIntoView({
+                block: "center",
+                inline: "center",
+              });
+              sessionStorage.removeItem("postKeyProfile");
+            }
+          setpostOffset((prevPostOffset) => prevPostOffset + 1);
+        }
+        setLoading(false);
+      })
+      .catch((e) => {
+        if (axios.isCancel(e)) return;
       });
+    return () => cancel();
+  }, [postOffset, authState, history, postKeyProfile, id]);
+
+  const observer = useRef();
+  const loadPointRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setpostOffset((prevPostOffset) => prevPostOffset + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore]
+  );
+
+  const likePost = (postId) => {
+    axios.post(
+      "https://shitdoug.herokuapp.com/likes",
+      { PostId: postId },
+      { headers: { accessToken: localStorage.getItem("accessToken") } }
+    );
+    // .then((response) => {
+    //   setListOfPosts(
+    //     listOfPosts.map((post) => {
+    //       if (post.id === postId) {
+    //         if (response.data.liked) {
+    //           return { ...post, Likes: [...post.Likes, 0] };
+    //         } else {
+    //           const likearray = post.Likes;
+    //           likearray.pop();
+    //           return { ...post, Likes: likearray };
+    //         }
+    //       } else return post;
+    //     })
+    //   );
+    //   if (likedPosts.includes(postId)) {
+    //     setLikedPosts(
+    //       likedPosts.filter((id) => {
+    //         return id !== postId;
+    //       })
+    //     );
+    //   } else setLikedPosts([...likedPosts, postId]);
+    // });
   };
 
   return (
@@ -77,21 +137,43 @@ function Profile() {
               key={key}
               className="post"
               onClick={() => {
+                sessionStorage.setItem(
+                  "postKeyProfile",
+                  JSON.stringify(value.id)
+                );
                 history.push(`/post/${btoa(value.id)}`);
               }}
             >
-              <div className="title">
-                <b> {value.title} </b>
-              </div>
+              {key === listOfPosts.length - 3 && value.id === postKeyProfile ? (
+                <div className="title" ref={(loadPointRef, returnkey)}>
+                  <b> {value.title} </b>
+                </div>
+              ) : key === listOfPosts.length - 3 ? (
+                <div className="title" ref={loadPointRef}>
+                  <b> {value.title} </b>
+                </div>
+              ) : value.id === postKeyProfile ? (
+                <div className="title" ref={returnkey}>
+                  <b> {value.title} </b>
+                </div>
+              ) : (
+                <div className="title">
+                  <b> {value.title} </b>
+                </div>
+              )}
               <div className="body">{value.postText}</div>
               <div className="footer">
-                <Link
-                  to={`/profile/${btoa(value.UserId)}`}
+                <a
+                  href={`/profile/${btoa(value.UserId)}`}
                   className="username"
                   onClick={(event) => {
                     event.stopPropagation();
+                    sessionStorage.setItem(
+                      "postKeyProfile",
+                      JSON.stringify(value.id)
+                    );
                   }}
-                >{` — ${value.username}`}</Link>
+                >{` — ${value.username}`}</a>
                 <div className="icon">
                   <img
                     className={
@@ -101,6 +183,17 @@ function Profile() {
                     alt="Like"
                     onClick={(event) => {
                       event.stopPropagation();
+                      let likearray = value.Likes;
+                      likedPosts.includes(value.id)
+                        ? likearray.pop()
+                        : likearray.push(0);
+                      likedPosts.includes(value.id)
+                        ? setLikedPosts(
+                            likedPosts.filter((id) => {
+                              return id !== value.id;
+                            })
+                          )
+                        : setLikedPosts([...likedPosts, value.id]);
                       likePost(value.id);
                     }}
                   />

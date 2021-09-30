@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useHistory, Link } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../helpers/AuthContext";
 import likeImg from "../images/768px-OOjs_UI_icon_heart.png";
@@ -46,11 +46,6 @@ function Post() {
   }, []);
 
   const likePost = (id) => {
-    if (like.liked) {
-      setLike({ liked: false, likes: like.likes.pop() });
-    } else {
-      setLike({ liked: true, likes: like.likes.push(0) });
-    }
     axios.post(
       "https://shitdoug.herokuapp.com/likes",
       { PostId: id },
@@ -199,21 +194,26 @@ function Post() {
               </span>
             </div>
             <div className="footer" style={{ marginTop: "20px" }}>
-              <Link
-                to={`/profile/${btoa(postObject.UserId)}`}
+              <a
+                href={`/profile/${btoa(postObject.UserId)}`}
                 className="username"
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
               >
                 {`— ${postObject.username}`}
-              </Link>
+              </a>
               <div className="icon">
                 <img
                   className={like.liked ? "unlikebtn" : "likebtn"}
                   src={likeImg}
                   alt="Like"
                   onClick={() => {
+                    let likearray = like.likes;
+                    like.liked ? likearray.pop() : likearray.push(0);
+                    like.liked
+                      ? setLike({ liked: false, likes: likearray })
+                      : setLike({ liked: true, likes: likearray });
                     likePost(id);
                   }}
                 />

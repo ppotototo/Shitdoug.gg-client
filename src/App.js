@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Home from "./pages/Home";
 import Post from "./pages/Post";
@@ -41,8 +41,8 @@ function App() {
   }, [authState]);
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
-    sessionStorage.removeItem("postKey");
+    localStorage.clear();
+    sessionStorage.clear();
     setLogoutWarning({ opacity: 0, visibility: "hidden" });
     setAuthState({
       username: "",
@@ -64,34 +64,30 @@ function App() {
             {!authState.status ? (
               <>
                 <div id="homepage">Shitdoug.gg</div>
-                <Link to="/login" className="Link">
-                  Login
-                </Link>
-                <Link to="/register" className="Link">
-                  Register
-                </Link>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
               </>
             ) : (
               <>
-                <Link
-                  to="/"
+                <a
+                  href="/"
                   id="homepage"
                   onClick={() => {
-                    sessionStorage.removeItem("postKey");
+                    sessionStorage.clear();
                     window.location.pathname === "/" &&
                       window.location.reload(true);
                   }}
                 >
                   Shitdoug.gg
-                </Link>
+                </a>
                 <div id="logged-in-user">
                   &nbsp; . . . . . . . &nbsp; &nbsp; logged in as: &nbsp;
-                  <Link
-                    to={`/profile/${btoa(authState.id)}`}
+                  <a
+                    href={`/profile/${btoa(authState.id)}`}
                     className="username"
                   >
                     <b>{authState.username}</b>
-                  </Link>
+                  </a>
                   &nbsp;&nbsp;&nbsp;
                 </div>
                 <button
@@ -105,9 +101,9 @@ function App() {
                 >
                   Logout
                 </button>
-                <Link to="/createpost" className="Link">
+                <a href="/createpost" className="Link">
                   Create A Post
-                </Link>
+                </a>
                 <div
                   className="warning logoutWarning"
                   style={{
@@ -118,14 +114,13 @@ function App() {
                   <div style={{ gridArea: "text", margin: "10px auto" }}>
                     Are you sure you want to logout?
                   </div>
-                  <Link
-                    to="/login"
-                    className="Link"
+                  <a
+                    href="/login"
                     style={{ gridArea: "button1" }}
                     onClick={logout}
                   >
                     Yes
-                  </Link>
+                  </a>
                   <button
                     style={{ gridArea: "button2" }}
                     onClick={() => {
