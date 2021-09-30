@@ -14,6 +14,7 @@ import { useState, useEffect, useLayoutEffect } from "react";
 import axios from "axios";
 
 function App() {
+  const [loading, setLoading] = useState(false);
   const [authState, setAuthState] = useState({
     username: "",
     id: 0,
@@ -21,6 +22,7 @@ function App() {
   });
 
   useLayoutEffect(() => {
+    setLoading(true);
     let cancel;
     axios
       .get("https://shitdoug.herokuapp.com/auth/auth", {
@@ -40,6 +42,7 @@ function App() {
             status: true,
           });
         }
+        setLoading(false);
       })
       .catch((e) => {
         if (axios.isCancel(e)) return;
@@ -68,7 +71,9 @@ function App() {
       <AuthContext.Provider value={{ authState, setAuthState }}>
         <Router>
           <div id="Nav">
-            {!authState.status ? (
+            {loading ? (
+              <div className="loading">loading</div>
+            ) : !authState.status ? (
               <>
                 <div id="homepage">Shitdoug.gg</div>
                 <a href="/login" className="Link">

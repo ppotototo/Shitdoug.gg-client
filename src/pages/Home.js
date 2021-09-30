@@ -42,28 +42,7 @@ function Home() {
           setListOfPosts((post) => {
             return [...post, response.data].flat();
           });
-          setLikedPosts((postid) => {
-            return [
-              ...postid,
-              response.data
-                .map((post) => post.Likes)
-                .flat()
-                .filter((like) => authState.id === like.UserId)
-                .map((like) => like.PostId),
-            ].flat();
-          });
           setHasMore(response.data.length > 0);
-          if (postKeyHome) {
-            if (!response.data.map((post) => post.id).includes(postKeyHome))
-              if (returnkey.current) {
-                returnkey.current.scrollIntoView({
-                  block: "center",
-                  inline: "center",
-                });
-                sessionStorage.removeItem("postKeyHome");
-              }
-            setpostOffset((prevPostOffset) => prevPostOffset + 1);
-          }
           setLoading(false);
         })
         .catch((e) => {
@@ -71,7 +50,31 @@ function Home() {
         });
       return () => cancel();
     }
-  }, [, postOffset, history, postKeyHome]);
+  }, [postOffset, history, postKeyHome]);
+
+  useEffect(() => {
+    setLikedPosts((postid) => {
+      return [
+        ...postid,
+        listOfPosts
+          .map((post) => post.Likes)
+          .flat()
+          .filter((like) => authState.id === like.UserId)
+          .map((like) => like.PostId),
+      ].flat();
+    });
+    if (postKeyHome) {
+      if (!listOfPosts.map((post) => post.id).includes(postKeyHome))
+        if (returnkey.current) {
+          returnkey.current.scrollIntoView({
+            block: "center",
+            inline: "center",
+          });
+          sessionStorage.removeItem("postKeyHome");
+        }
+      setpostOffset((prevPostOffset) => prevPostOffset + 1);
+    }
+  }, [listOfPosts])
 
   const observer = useRef();
   const loadPointRef = useCallback(
