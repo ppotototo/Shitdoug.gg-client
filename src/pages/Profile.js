@@ -78,7 +78,7 @@ function Profile() {
         if (axios.isCancel(e)) return;
       });
     return () => cancel();
-  }, [postOffset, authState, history, postKeyProfile, id]);
+  }, [postOffset, history, postKeyProfile, id]);
 
   const observer = useRef();
   const loadPointRef = useCallback(

@@ -71,7 +71,7 @@ function Home() {
         });
       return () => cancel();
     }
-  }, [postOffset, authState, history, postKeyHome]);
+  }, [postOffset, history, postKeyHome]);
 
   const observer = useRef();
   const loadPointRef = useCallback(

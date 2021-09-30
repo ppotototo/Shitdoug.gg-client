@@ -21,11 +21,13 @@ function App() {
   });
 
   useLayoutEffect(() => {
+    let cancel;
     axios
       .get("https://shitdoug.herokuapp.com/auth/auth", {
         headers: {
           accessToken: localStorage.getItem("accessToken"),
         },
+        cancelToken: new axios.CancelToken((c) => (cancel = c)),
       })
       .then((response) => {
         console.log(response.data);
@@ -39,8 +41,12 @@ function App() {
             status: true,
           });
         }
+      })
+      .catch((e) => {
+        if (axios.isCancel(e)) return;
       });
-  }, [authState]);
+    return () => cancel();
+  }, []);
 
   const logout = () => {
     localStorage.clear();
