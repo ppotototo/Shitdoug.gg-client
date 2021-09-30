@@ -28,7 +28,9 @@ function App() {
         },
       })
       .then((response) => {
+        console.log(response.data);
         if (response.data.error) {
+          console.log(response.data.error);
           setAuthState({ ...authState, status: false });
         } else {
           setAuthState({
