@@ -29,33 +29,27 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem("accessToken")) {
-      history.push("/login");
-    } else {
-      setLoading(true);
-      let cancel;
-      axios
-        .get(`https://shitdoug.herokuapp.com/posts/offset/${postOffset}`, {
-          cancelToken: new axios.CancelToken((c) => (cancel = c)),
-        })
-        .then((response) => {
-          setListOfPosts((post) => {
-            return [...post, response.data].flat();
-          });
-          setHasMore(response.data.length > 0);
-          setLoading(false);
-        })
-        .catch((e) => {
-          if (axios.isCancel(e)) return;
+    setLoading(true);
+    let cancel;
+    axios
+      .get(`https://shitdoug.herokuapp.com/posts/offset/${postOffset}`, {
+        cancelToken: new axios.CancelToken((c) => (cancel = c)),
+      })
+      .then((response) => {
+        setListOfPosts((post) => {
+          return [...post, response.data].flat();
         });
-      return () => cancel();
-    }
-  }, [postOffset, history, postKeyHome]);
+        setHasMore(response.data.length > 0);
+        setLoading(false);
+      })
+      .catch((e) => {
+        if (axios.isCancel(e)) return;
+      });
+    return () => cancel();
+  }, [postOffset, history]);
 
   useEffect(() => {
-    if (!localStorage.getItem("accessToken")) {
-      history.push("/login");
-    } else {
+    if (authState.status) {
       setLikedPosts((postid) => {
         return [
           ...postid,
@@ -66,19 +60,26 @@ function Home() {
             .map((like) => like.PostId),
         ].flat();
       });
-      if (postKeyHome) {
-        if (!listOfPosts.map((post) => post.id).includes(postKeyHome))
-          if (returnkey.current) {
-            returnkey.current.scrollIntoView({
-              block: "center",
-              inline: "center",
-            });
-            sessionStorage.removeItem("postKeyHome");
-          }
+    }
+  }, [listOfPosts, authState, history]);
+
+  useEffect(() => {
+    if (postKeyHome) {
+      console.log("postKey");
+      if (!listOfPosts.map((post) => post.id).includes(postKeyHome)) {
+        console.log("no postKey post yet");
+        if (returnkey.current) {
+          console.log("scrolled");
+          returnkey.current.scrollIntoView({
+            block: "center",
+            inline: "center",
+          });
+          sessionStorage.removeItem("postKeyHome");
+        }
         setpostOffset((prevPostOffset) => prevPostOffset + 1);
       }
     }
-  }, [postOffset, listOfPosts, postKeyHome]);
+  }, [listOfPosts, postKeyHome, history]);
 
   const observer = useRef();
   const loadPointRef = useCallback(
