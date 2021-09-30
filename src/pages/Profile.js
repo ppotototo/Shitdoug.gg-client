@@ -47,22 +47,12 @@ function Profile() {
         }
       )
       .then((response) => {
+        setHasMore(response.data.length > 0);
         setListOfPosts((post) => {
           return [...post, response.data].flat();
         });
-        setLikedPosts((postid) => {
-          return [
-            ...postid,
-            response.data
-              .map((post) => post.Likes)
-              .flat()
-              .filter((like) => authState.id === like.UserId)
-              .map((like) => like.PostId),
-          ].flat();
-        });
-        setHasMore(response.data.length > 0);
         if (postKeyProfile) {
-          if (!response.data.map((post) => post.id).includes(postKeyProfile))
+          if (!listOfPosts.map((post) => post.id).includes(postKeyProfile)) {
             if (returnkey.current) {
               returnkey.current.scrollIntoView({
                 block: "center",
@@ -70,7 +60,8 @@ function Profile() {
               });
               sessionStorage.removeItem("postKeyProfile");
             }
-          setpostOffset((prevPostOffset) => prevPostOffset + 1);
+            setpostOffset((prevPostOffset) => prevPostOffset + 1);
+          }
         }
         setLoading(false);
       })
@@ -79,6 +70,21 @@ function Profile() {
       });
     return () => cancel();
   }, [postOffset, history, postKeyProfile, id]);
+
+  useEffect(() => {
+    if (authState.status) {
+      setLikedPosts((postid) => {
+        return [
+          ...postid,
+          listOfPosts
+            .map((post) => post.Likes)
+            .flat()
+            .filter((like) => authState.id === like.UserId)
+            .map((like) => like.PostId),
+        ].flat();
+      });
+    }
+  }, [listOfPosts, authState, history]);
 
   const observer = useRef();
   const loadPointRef = useCallback(

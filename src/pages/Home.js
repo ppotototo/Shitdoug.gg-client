@@ -36,17 +36,29 @@ function Home() {
         cancelToken: new axios.CancelToken((c) => (cancel = c)),
       })
       .then((response) => {
+        setHasMore(response.data.length > 0);
         setListOfPosts((post) => {
           return [...post, response.data].flat();
         });
-        setHasMore(response.data.length > 0);
+        if (postKeyHome) {
+          if (!listOfPosts.map((post) => post.id).includes(postKeyHome)) {
+            if (returnkey.current) {
+              returnkey.current.scrollIntoView({
+                block: "center",
+                inline: "center",
+              });
+              sessionStorage.removeItem("postKeyHome");
+            }
+            setpostOffset((prevPostOffset) => prevPostOffset + 1);
+          }
+        }
         setLoading(false);
       })
       .catch((e) => {
         if (axios.isCancel(e)) return;
       });
     return () => cancel();
-  }, [postOffset, history]);
+  }, [postOffset, postKeyHome, history]);
 
   useEffect(() => {
     if (authState.status) {
@@ -62,24 +74,6 @@ function Home() {
       });
     }
   }, [listOfPosts, authState, history]);
-
-  useEffect(() => {
-    if (postKeyHome) {
-      console.log("postKey");
-      if (!listOfPosts.map((post) => post.id).includes(postKeyHome)) {
-        console.log("no postKey post yet");
-        if (returnkey.current) {
-          console.log("scrolled");
-          returnkey.current.scrollIntoView({
-            block: "center",
-            inline: "center",
-          });
-          sessionStorage.removeItem("postKeyHome");
-        }
-        setpostOffset((prevPostOffset) => prevPostOffset + 1);
-      }
-    }
-  }, [listOfPosts, postKeyHome, history]);
 
   const observer = useRef();
   const loadPointRef = useCallback(
@@ -128,7 +122,6 @@ function Home() {
 
   return (
     <div className="post-area">
-      <view>{console.log(likedPosts)}</view>
       {listOfPosts.map((value, key) => {
         return (
           <div
