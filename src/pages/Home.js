@@ -55,7 +55,6 @@ function Home() {
                 .includes(postKey)
             )
               if (returnkey.current) {
-                console.log("sex");
                 returnkey.current.scrollIntoView({
                   block: "center",
                   inline: "center",

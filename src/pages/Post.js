@@ -57,7 +57,6 @@ function Post() {
         if (response.data.liked) {
           likearray.push(0);
         } else likearray.pop();
-        console.log(likearray);
         setLike({
           liked: response.data.liked,
           likes: likearray,
