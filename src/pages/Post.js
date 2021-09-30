@@ -46,22 +46,26 @@ function Post() {
   }, []);
 
   const likePost = (id) => {
-    axios
-      .post(
-        "https://shitdoug.herokuapp.com/likes",
-        { PostId: id },
-        { headers: { accessToken: localStorage.getItem("accessToken") } }
-      )
-      .then((response) => {
-        const likearray = like.likes;
-        if (response.data.liked) {
-          likearray.push(0);
-        } else likearray.pop();
-        setLike({
-          liked: response.data.liked,
-          likes: likearray,
-        });
-      });
+    if (like.liked) {
+      setLike({ liked: false, likes: like.likes.pop() });
+    } else {
+      setLike({ liked: true, likes: like.likes.push(0) });
+    }
+    axios.post(
+      "https://shitdoug.herokuapp.com/likes",
+      { PostId: id },
+      { headers: { accessToken: localStorage.getItem("accessToken") } }
+    );
+    // .then((response) => {
+    //   const likearray = like.likes;
+    //   if (response.data.liked) {
+    //     likearray.push(0);
+    //   } else likearray.pop();
+    //   setLike({
+    //     liked: response.data.liked,
+    //     likes: likearray,
+    //   });
+    // })
   };
 
   const addComment = () => {
