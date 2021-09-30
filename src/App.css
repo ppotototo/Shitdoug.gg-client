@@ -223,12 +223,12 @@ input {
     opacity: 1;
   }
 }
-.submitting {
+.submitting, .loading {
   font-size: small;
   color: grey;
   margin: 10px;
 }
-.submitting::after {
+.submitting::after, .loading::after {
   content: '';
   animation: loading;
   animation-duration: 2s;
@@ -238,10 +238,13 @@ input {
   0% {
     content: '';
   }
-  30% {
+  25% {
     content: '.';
   }
-  60% {
+  50% {
     content: '..';
+  }
+  75% {
+    content: '...';
   }
 }

@@ -30,7 +30,6 @@ function App() {
         cancelToken: new axios.CancelToken((c) => (cancel = c)),
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.error) {
           console.log(response.data.error);
           setAuthState({ ...authState, status: false });
@@ -72,8 +71,12 @@ function App() {
             {!authState.status ? (
               <>
                 <div id="homepage">Shitdoug.gg</div>
-                <a href="/login">Login</a>
-                <a href="/register">Register</a>
+                <a href="/login" className="Link">
+                  Login
+                </a>
+                <a href="/register" className="Link">
+                  Register
+                </a>
               </>
             ) : (
               <>
@@ -124,6 +127,7 @@ function App() {
                   </div>
                   <a
                     href="/login"
+                    className="Link"
                     style={{ gridArea: "button1" }}
                     onClick={logout}
                   >

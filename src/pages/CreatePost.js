@@ -59,7 +59,7 @@ function CreatePost() {
           <button type="submit"> Create Post</button>
         </Form>
       </Formik>
-      {loading && <div className="submitting">submitting.</div>}
+      {loading && <div className="submitting">submitting</div>}
     </div>
   );
 }

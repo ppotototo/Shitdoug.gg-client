@@ -58,7 +58,7 @@ function Register() {
           <button type="submit"> Register</button>
         </Form>
       </Formik>
-      {loading && <div className="submitting">submitting.</div>}
+      {loading && <div className="submitting">submitting</div>}
     </div>
   );
 }

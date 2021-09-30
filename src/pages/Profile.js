@@ -204,6 +204,7 @@ function Profile() {
             </div>
           );
         })}
+        {loading && <div className="loading">loading</div>}
       </div>
     </div>
   );

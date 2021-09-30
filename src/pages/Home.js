@@ -120,6 +120,7 @@ function Home() {
 
   return (
     <div className="post-area">
+      <view>{console.log(likedPosts)}</view>
       {listOfPosts.map((value, key) => {
         return (
           <div
@@ -190,6 +191,7 @@ function Home() {
           </div>
         );
       })}
+      {loading && <div className="loading">loading</div>}
     </div>
   );
 }
