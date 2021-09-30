@@ -78,7 +78,7 @@ function Home() {
         setpostOffset((prevPostOffset) => prevPostOffset + 1);
       }
     }
-  }, [listOfPosts])
+  }, [postOffset, listOfPosts, postKeyHome]);
 
   const observer = useRef();
   const loadPointRef = useCallback(
